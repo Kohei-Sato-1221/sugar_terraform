@@ -10,9 +10,14 @@ variable "sugar_instance_type" {
 	default = "t2.micro"
 }
 
+# terraform apply -var 'env=prod'
+# terraform apply -var 'env=dev'
+variable "env" {}
+
 # local変数は実行時に上書き不可能
 locals {
-	sugar_tag = "sugar_tag_sample001"
+	# 三項演算子を使うことができる
+	sugar_tag = var.env == "prod" ? "sugar_prod" : "sugar_dev"
 }
 
 # 外部データを参照できる
@@ -58,11 +63,8 @@ resource "aws_instance" "sugar_tf_ec2" {
 		Name = local.sugar_tag
 	}
 	
-	user_data = <<EOF
-		#!/bin/bash
-		yum install -y httpd
-		systemctl start httpd.service
-EOF
+	# 外部ファイルの読み込み
+	user_data = file("./data.sh")
 }
 
 # outputは実行結果後に特定の値を出力可能
