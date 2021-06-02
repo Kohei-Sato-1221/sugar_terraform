@@ -36,6 +36,14 @@ data "aws_ami" "recent_amazon_linux_2" {
 	}
 }
 
+data "template_file" "httpd_data" {
+	template = file("./data.sh.tpl")
+
+	vars = {
+		package = "httpd"
+	}
+}
+
 resource "aws_security_group" "sugar_tf_sg" {
 	name = "sugar-ec2"
 
@@ -64,7 +72,7 @@ resource "aws_instance" "sugar_tf_ec2" {
 	}
 	
 	# 外部ファイルの読み込み
-	user_data = file("./data.sh")
+	user_data = data.template_file.httpd_data.rendered
 }
 
 # outputは実行結果後に特定の値を出力可能
