@@ -2,6 +2,40 @@ provider "aws" {
     region = "ap-northeast-1"
 }
 
+# bucket for ALB
+resource "aws_s3_bucket" "sugar_alb_log" {
+    bucket = "sugar-alb-log-1221"
+    force_destroy = true # trueにすると中身があっても削除できる
+
+    lifecycle_rule {
+        enabled = true
+
+        expiration {
+            days = "180"
+        }
+    }
+}
+
+# bucket policy
+resource "aws_s3_bucket_policy" "sugar_alb_log" {
+    bucket = aws_s3_bucket.sugar_alb_log.id
+    policy = data.aws_iam_policy_document.sugar_alb_log.json
+}
+
+data "aws_iam_policy_document" "sugar_alb_log" {
+    statement {
+        effect = "Allow"
+        actions = ["s3:PutObject"]
+        resources = ["arn:aws:s3:::${aws_s3_bucket.sugar_alb_log.id}/*"]
+
+        principals {
+            type = "AWS"
+            identifiers = ["582318560864"] # AWSが管理しているアカウント（リージョン毎に異なる）
+        }
+    }
+}
+
+/*
 # プライベートバケット
 resource "aws_s3_bucket" "private" {
     bucket = "private-sugar-bucket-1221"
@@ -40,3 +74,4 @@ resource "aws_s3_bucket" "public" {
         max_age_seconds = 3000
     }
 }
+*/
