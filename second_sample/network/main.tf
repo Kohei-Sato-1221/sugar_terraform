@@ -116,25 +116,10 @@ resource "aws_nat_gateway" "sugar_ng_1" {
     depends_on = [aws_internet_gateway.sugar_ig]
 }
 
-resource "aws_security_group" "sugar_sg" {
-    name = "sugar_sg"
+module "sugar_sg" {
+    source = "./security_group"
+    name = "sugar-sg"
     vpc_id = aws_vpc.sugar_vpc.id
-}
-
-resource "aws_security_group_rule" "sugar_ingress" {
-    type = "ingress"
-    from_port = "80"
-    to_port = "80"
-    protocol = "tcp"
+    port = 80
     cidr_blocks = ["0.0.0.0/0"]
-    security_group_id = aws_security_group.sugar_sg.id
-}
-
-resource "aws_security_group_rule" "sugar_egress" {
-    type = "egress"
-    from_port = "0"
-    to_port = "0"
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    security_group_id = aws_security_group.sugar_sg.id
 }
