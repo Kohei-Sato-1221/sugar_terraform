@@ -33,9 +33,8 @@ resource "aws_route" "sugar_public" {
     destination_cidr_block = "0.0.0.0/0"
 }
 
-#resource "aws_route_table_association" "sugar_private" {
-#    vpc_id = aws_vpc.sugar_vpc.id
-#    cidr_block = "10.0.64.0/24"
-#    availability_zone = "ap-northeast-1a"
-#    map_public_ip_on_launch = false
-#}
+resource "aws_route_table_association" "sugar_public" {
+    subnet_id = aws_subnet.sugar_public.id
+    route_table_id = aws_route_table.sugar_public.id
+}
+
