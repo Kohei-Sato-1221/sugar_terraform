@@ -1,0 +1,21 @@
+[
+    {
+        "name" : "sugar-container",
+        "image" : "nginx:latest",
+        "essential" : true,
+        "logConfiguration" : {
+            "logDriver" : "awslogs",
+            "options" : {
+                "awslogs-region" : "ap-northeast-1",
+                "awslogs-stream-prefix" : "nginx",
+                "awslogs-group" : "/ecs/sugar_log"
+            }
+        },
+        "portMappings" : [
+            {
+                "protocol" : "tcp",
+                "containerPort" : 80
+            }
+        ]
+    }
+]
